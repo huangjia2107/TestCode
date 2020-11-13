@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net4.8</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+</Project>
