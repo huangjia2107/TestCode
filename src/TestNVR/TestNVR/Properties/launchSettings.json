@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestNVR": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -27,9 +27,14 @@ namespace TestNVR
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
-            var d = fff("172.16.154.200", 8000, "admin", "jidian123", 33, new DateTime(2020, 12, 25, 16, 00, 00), new DateTime(2020, 12, 25, 16, 01, 00));
+            var d = fff("172.16.154.200", 8000, "admin", "jidian123", 33, new DateTime(2020, 12, 31, 15, 00, 00), new DateTime(2020, 12, 31, 15, 01, 00));
+        }
+
+        private void StopBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Win32.CloseMP4File();
         }
 
         private CHCNetSDK.NET_DVR_TIME DateTimeToNETDVRTIME(DateTime time)
@@ -78,6 +83,13 @@ namespace TestNVR
                 return false;
             }
 
+            if (!CHCNetSDK.NET_DVR_SetPlayDataCallBack(playHandle, PlayDataCallback, 0))
+            {
+                CHCNetSDK.NET_DVR_Logout(userId);
+                CHCNetSDK.NET_DVR_Cleanup();
+                return false;
+            }
+
             uint pos = 0;
             if (!CHCNetSDK.NET_DVR_PlayBackControl(playHandle, CHCNetSDK.NET_DVR_PLAYSTART, 0, ref pos))
             {
@@ -87,22 +99,37 @@ namespace TestNVR
                 return false;
             }
 
-            if(!CHCNetSDK.NET_DVR_SetPlayDataCallBack(playHandle, PlayDataCallback, 0))
-            {
-                CHCNetSDK.NET_DVR_Logout(userId);
-                CHCNetSDK.NET_DVR_Cleanup();
-                return false;
-            }
+            
 
             return true;
         }
 
         void  PlayDataCallback(int lPlayHandle, uint dwDataType, IntPtr pBuffer, uint dwBufSize, uint dwUser)
         {
-            var bufHandle = new byte[dwBufSize]; 
-            Marshal.Copy(pBuffer, bufHandle, 0, (int)dwBufSize);
+            var buffer = new byte[dwBufSize]; 
+            Marshal.Copy(pBuffer, buffer, 0, (int)dwBufSize);
 
+            var filePath = Encoding.Unicode.GetBytes(AppDomain.CurrentDomain.BaseDirectory + "222.mp4");
 
+            switch (dwDataType)
+            {
+                case CHCNetSDK.NET_DVR_SYSHEAD:
+                    break;
+
+                case CHCNetSDK.NET_DVR_STREAMDATA:
+                    break;
+
+                case CHCNetSDK.NET_DVR_AUDIOSTREAMDATA:
+                    break;
+
+                case CHCNetSDK.NET_DVR_STD_VIDEODATA:
+                    break;
+
+                case CHCNetSDK.NET_DVR_STD_AUDIODATA:
+                    break;
+            }
+
+/*
             switch (dwDataType)
             {
 
@@ -110,21 +137,21 @@ namespace TestNVR
                     break;
 
                 case CHCNetSDK.VIDEO_I_FRAME: // I 帧 
-                    Win32.GenerateMP4File(AppDomain.CurrentDomain.BaseDirectory+"222.mp4", bufHandle, dwBufSize, dwDataType);
+                    Win32.GenerateMP4File(filePath, buffer, dwBufSize, dwDataType);
                     break;
 
                 case CHCNetSDK.VIDEO_B_FRAME: // B 帧
                     break;
 
                 case CHCNetSDK.VIDEO_P_FRAME: // P 帧
-                    Win32.GenerateMP4File(AppDomain.CurrentDomain.BaseDirectory + "222.mp4", bufHandle, dwBufSize, dwDataType);
+                    Win32.GenerateMP4File(filePath, buffer, dwBufSize, dwDataType);
                     break;
 
                 default:       // 其他数据
                     break;
             }
+*/
 
-            
         }
     }
 }

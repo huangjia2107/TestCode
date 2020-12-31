@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "MP4Generator.h"
 
-MP4FileHandle CreateMP4File(string sfilePath)
+MP4FileHandle CreateMP4File(TCHAR *sfilePath)
 {
 	if (mFile == NULL)
 	{
-		const char* fileName = sfilePath.c_str();
+		const char* fileName = TCHAR2char(sfilePath);
 		mFile = MP4Create(fileName);
 
 		if (mFile == MP4_INVALID_FILE_HANDLE)
@@ -133,7 +133,7 @@ int ReadOneNaluFromBuf(const unsigned char* pBuffer, unsigned int nBufferSize, u
 	return 0;
 }
 
-bool GenerateMP4File(string sfilePath, BYTE* pBuffer, DWORD dwBufSize, long dwDataType)
+bool GenerateMP4File(TCHAR *sfilePath, BYTE* pBuffer, DWORD dwBufSize, long dwDataType)
 {
 	CreateMP4File(sfilePath);
 	WriteH264Data(mFile, pBuffer, dwBufSize, dwDataType);
@@ -144,4 +144,26 @@ bool GenerateMP4File(string sfilePath, BYTE* pBuffer, DWORD dwBufSize, long dwDa
 void CloseMP4File()
 {
 	MP4Close(mFile);
+}
+
+char* TCHAR2char(const TCHAR* STR)
+{
+	//返回字符串的长度
+	int size = WideCharToMultiByte(CP_ACP, 0, STR, -1, NULL, 0, NULL, FALSE);
+
+	//申请一个多字节的字符串变量
+	char* str = new char[sizeof(char) * size];
+
+	//将STR转成str
+	WideCharToMultiByte(CP_ACP, 0, STR, -1, str, size, NULL, FALSE);
+
+	return str;
+}
+
+TCHAR* char2TCAHR(const char* str)
+{
+	int size = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+	TCHAR* retStr = new TCHAR[size * sizeof(TCHAR)];
+	MultiByteToWideChar(CP_ACP, 0, str, -1, retStr, size);
+	return retStr;
 }

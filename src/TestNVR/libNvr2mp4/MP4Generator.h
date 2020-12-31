@@ -31,9 +31,12 @@ typedef struct _MP4ENC_NaluUnit
 MP4FileHandle mFile;
 MP4TrackId mVideoId;			// viodeo的trackID
 
-MP4FileHandle CreateMP4File(string sfilePath);
+MP4FileHandle CreateMP4File(TCHAR* sfilePath);
 int WriteH264Data(MP4FileHandle MP4File, const unsigned char* pData, int size, long dwDataType);    // 把H264裸码写入MP4文件
 int ReadOneNaluFromBuf(const unsigned char* pBuffer, unsigned int nBufferSize, unsigned int offSet, MP4ENC_NaluUnit& nalu); // 从H264数据缓冲区读取一个nalu
 
-EXPORTDLL bool GenerateMP4File(string sfilePath, BYTE* pBuffer, DWORD dwBufSize, long dwDataType);							// 保存H264裸码为MP4文件的接口
+TCHAR* char2TCAHR(const char* str);
+char* TCHAR2char(const TCHAR* STR);
+
+EXPORTDLL bool GenerateMP4File(TCHAR* sfilePath, BYTE* pBuffer, DWORD dwBufSize, long dwDataType);							// 保存H264裸码为MP4文件的接口
 EXPORTDLL void CloseMP4File();																				// 关闭MP4文件的接口
